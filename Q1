@@ -1,0 +1,44 @@
+#Questao 1 trab1
+#gerar 2 numeros, multiplicar numeros, gravar na memoria
+addi t0,x0,0x38   #t0 = x0 + 0x38
+addi t1,x0,0x46   #t1 = x0 + 0x46
+
+#Separar os expoentes e as mantissas
+srli t3,t0,4   #t3 recebe o expoente do primeiro número
+srli t4,t1,4   #t4 recebe o expoente do segundo número
+andi t5,t0,15  #t5 recebe a mantissa do primeiro número
+andi t6,t1,15  #t6 recebe a mantissa do segundo número
+
+#acrescentar o 1 implícito do sistema de representação
+addi t5,t5,16
+addi t6,t6,16
+
+addi s0,x0,0  #contador
+addi t2,x0,0  #resultado multiplicação
+#repeticao que ira somar t6, t5 vezes (t6*t5)
+Loop: add t2,t2,t6    #t2 = t2 + t6
+	  addi s0,s0,1    #s0 = s0 + 1
+      beq s0,t5,Exit  #se s0 == t5, vai para linha Exit
+      bne s0,t5,Loop  #se s0 != t5, volta para linha Loop
+Exit:
+#calculando o expoente do numero final e gravando em a0
+add a0,t3,t4
+addi a0,a0,-3
+
+srli s1,t2,8        #captura implicito da multiplicação das mantissas
+srli t2,t2,4        #captura mantissa com implicito
+andi s2,t2,15       #captura somente a mantissa
+
+addi t0,x0,1         #variavel unica auxiliar
+LOOP: beq s1,t0,FIM  #verifica se precisa de ajuste 
+andi a1,s1,1         #captura o primeiro bit do implicito
+bne a1,t0,DIF        #verifica se a1 é diferente a 1, se for vai pra dif
+addi s2,s2,8         #se for deslocamos esse bit para dentro da mantissa, adicionando 8(0b1000) na mantissa
+DIF: srli s2,s2,1    #deslocamos um bit na mantissa
+srli s1,s1,1         #deslocamos um bit no implicito
+addi a0,a0,1         #somamos 1 no expoente
+j LOOP               #reiniciamos o LOOP
+FIM:
+slli a0, a0, 4   #ajustamos o expoente 4 bits para a esquerda, para concatenar com a mantissa
+add a3, a0, s2   #concatenamos o expoente e a mantissa e armazenamos em a3 como resultado
+

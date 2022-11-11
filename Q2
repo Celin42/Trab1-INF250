@@ -1,0 +1,337 @@
+#Questao 2 trab1
+#gerar 2 numeros, multiplicar numeros, gravar na memoria
+addi t0,x0,0x38   #t0 = x0 + 0x38
+addi t1,x0,0x46   #t1 = x0 + 0x46
+
+#Separar os expoentes e as mantissas
+srli t3,t0,4   #t3 recebe o expoente do primeiro número
+srli t4,t1,4   #t4 recebe o expoente do segundo número
+andi t5,t0,15  #t5 recebe a mantissa do primeiro número
+andi t6,t1,15  #t6 recebe a mantissa do segundo número
+
+#acrescentar o 1 implícito do sistema de representação
+addi t5,t5,16
+addi t6,t6,16
+
+addi s0,x0,0  #contador
+addi t2,x0,0  #resultado multiplicação
+#repeticao que ira somar t6, t5 vezes (t6*t5)
+Loop: add t2,t2,t6    #t2 = t2 + t6
+	  addi s0,s0,1    #s0 = s0 + 1
+      beq s0,t5,Exit  #se s0 == t5, vai para linha Exit
+      bne s0,t5,Loop  #se s0 != t5, volta para linha Loop
+Exit:
+#calculando o expoente do numero final e gravando em a0
+add a0,t3,t4
+addi a0,a0,-3
+
+srli s1,t2,8        #captura implicito da multiplicação das mantissas
+srli t2,t2,4        #captura mantissa com implicito
+andi s2,t2,15       #captura somente a mantissa
+
+addi t0,x0,1         #variavel unica auxiliar
+LOOP: beq s1,t0,FIM  #verifica se precisa de ajuste 
+andi a1,s1,1         #captura o primeiro bit do implicito
+bne a1,t0,DIF        #verifica se a1 é diferente a 1, se for vai pra dif
+addi s2,s2,8         #se for deslocamos esse bit para dentro da mantissa, adicionando 8(0b1000) na mantissa
+DIF: srli s2,s2,1    #deslocamos um bit na mantissa
+srli s1,s1,1         #deslocamos um bit no implicito
+addi a0,a0,1         #somamos 1 no expoente
+j LOOP               #reiniciamos o LOOP
+FIM:
+
+#a0 armazena o expoente
+addi a0,a0,-3
+addi x20,x0,50
+addi x21,x0,94
+slli x21,x21,8
+or x20,x20,x21
+addi x22,a0,48
+slli x22,x22,16
+or x20,x20,x22
+addi x23,x0,42
+slli x23,x23,24
+or x20,x20,x23
+sw x20,8(gp)
+
+addi x24,x20,49
+addi x25,x0,46
+slli x25,x25,8
+or x24,x24,x25
+
+addi x20,x0,0
+beq s2,x20,PRINT_0000
+addi x20,x20,1
+beq s2,x20,PRINT_0625
+addi x20,x20,1
+beq s2,x20,PRINT_1250
+addi x20,x20,1
+beq s2,x20,PRINT_1875
+addi x20,x20,1
+beq s2,x20,PRINT_2500
+addi x20,x20,1
+beq s2,x20,PRINT_3125
+addi x20,x20,1
+beq s2,x20,PRINT_3750
+addi x20,x20,1
+beq s2,x20,PRINT_4375
+addi x20,x20,1
+beq s2,x20,PRINT_5000
+addi x20,x20,1
+beq s2,x20,PRINT_5625
+addi x20,x20,1
+beq s2,x20,PRINT_6250
+addi x20,x20,1
+beq s2,x20,PRINT_6875
+addi x20,x20,1
+beq s2,x20,PRINT_7500
+addi x20,x20,1
+beq s2,x20,PRINT_8125
+addi x20,x20,1
+beq s2,x20,PRINT_8750
+addi x20,x20,1
+beq s2,x20,PRINT_9375
+
+j FIMPROG
+
+PRINT_0000:
+addi x26,x0,48
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,48
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,48
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_0625:
+addi x26,x0,48
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,54
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,50
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_1250:
+addi x26,x0,49
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,50
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,53
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_1875:
+addi x26,x0,49
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,56
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,55
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_2500:
+addi x26,x0,50
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,53
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,48
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_3125:
+addi x26,x0,51
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,49
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,50
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_3750:
+addi x26,x0,51
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,55
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,53
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_4375:
+addi x26,x0,52
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,51
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,55
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_5000:
+addi x26,x0,53
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,48
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,48
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_5625:
+addi x26,x0,53
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,54
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,50
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_6250:
+addi x26,x0,54
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,50
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,53
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_6875:
+addi x26,x0,54
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,56
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,55
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_7500:
+addi x26,x0,55
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,53
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,48
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_8125:
+addi x26,x0,56
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,49
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,50
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_8750:
+addi x26,x0,56
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,55
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,53
+addi a5,x0,48
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+PRINT_9375:
+addi x26,x0,57
+slli x26,x26,16
+or x24,x24,x26
+addi x27,x0,51
+slli x27,x27,24
+or x24,x24,x27
+sw x24,4(gp)
+addi a4,x0,55
+addi a5,x0,53
+slli a5,a5,8
+or a4,a4,a5
+sw a4,0(gp)
+j FIMPROG
+
+FIMPROG:
